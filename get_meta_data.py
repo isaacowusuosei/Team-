@@ -1,61 +1,36 @@
-from os import listdir
-from os.path import isfile, join
-
 import argparse
+import json
+import time
+
 import girder
-
-def get_image_name(image_path):
-    return image_path.split('/')[-1].split('.')[0]
-
-
-def get_all_files(dir):
-    """
-    Get all files in a dir
-    :param dir: path to a directory
-    :return: a list of file paths in the directory
-    """
-    file_paths = []
-
-    for file_path in listdir(dir):
-        if isfile(join(dir, f)):
-            file_paths.append(file_path)
-
-    return file_paths
-
-def check_dir(dir):
-    """
-    Checks that "/" is at the end of the dire
-    :param dir: a dir
-    :return: a dir with / appended if it's missing
-    """
-    if dir[-1] == '/':
-        return dir
-    else:
-        return dir + '/'
+import utils.filesys
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', dest='path', type=str,
                         help='path where the images are located')
-    parser.add_argument()
-
+    parser.add_argument('--output-path', dest='output_path', type=str,
+                        help='path to output data to')
     args = parser.parse_args()
 
-    data_path = check_dir(args.path)
-
-    file_paths = get_all_files(data_path)
+    data_path = utils.filesys.check_dir(args.path)
+    output_path = utils.filesys.check_dir(args.output_path)
+    file_paths = utils.filesys.get_all_files(data_path)
 
     for file_path in file_paths:
-        image_name = get_image_name(file_path)
+        image_name, file_extension = utils.data.get_image_name(file_path)
+
+        if file_extension not in ('jpg', 'png'):
+            continue
+
         image_id = girder.get_image_id(image_name)
         meta_data = girder.get_image_meta_data(image_id)
-        meta_data.write()
 
-
-
-
-
+        with open(output_path + image_name + '.json', 'w+') as json_file:
+            json.dump(meta_data, json_file, sort_keys=True, indent=5)
+        print('Wrote {} to disk!'.format(output_path + image_name + '.json'))
+        time.sleep(.6)
 
 
 if __name__ == '__main__':

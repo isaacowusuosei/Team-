@@ -1,7 +1,6 @@
 import json
 import urllib
 
-
 def read_response(url):
     response = urllib.urlopen(url)
 
@@ -15,6 +14,6 @@ def get_image_meta_data(image_id):
 
 
 def get_image_id(image_name):
-    request_url = "https://isic-archive.com:443/api/v1/image?limit=50&offset=0&sort=name&sortdir=1&name="
+    request_url = "https://isic-archive.com:443/api/v1/image?limit=50&offset=0&sort=name&sortdir=1&name=" + image_name
 
-    return request_url + image_name
+    return read_response(request_url)[0]['_id']
