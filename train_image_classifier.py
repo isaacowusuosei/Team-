@@ -551,8 +551,13 @@ def main(_):
         summaries |= set(tf.get_collection(tf.GraphKeys.SUMMARIES,
                                            first_clone_scope))
 
+        summaries = list(summaries)
+
         # Merge all summaries together.
-        summary_op = tf.summary.merge(list(summaries), name='summary_op')
+        summary_op = tf.summary.merge(summaries, name='summary_op')
+
+
+
 
         ###########################
         # Kicks off the training. #
@@ -570,6 +575,11 @@ def main(_):
             save_interval_secs=FLAGS.save_interval_secs,
             sync_optimizer=optimizer if FLAGS.sync_replicas else None,
         )
+
+
+
+
+
 
 
 if __name__ == '__main__':

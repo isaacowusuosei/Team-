@@ -157,9 +157,7 @@ def main(_):
             'Accuracy': slim.metrics.streaming_accuracy(predictions, labels),
             "Recall": slim.metrics.streaming_recall(predictions, labels),
             'Precision': slim.metrics.streaming_precision(predictions, labels),
-            'AUC': slim.metrics.streaming_auc(predictions, labels),
-            'Recall_5': slim.metrics.streaming_recall_at_k(
-                logits, labels, 5),
+            'AUC': slim.metrics.streaming_auc(predictions, labels)
 
         })
 

@@ -4,7 +4,7 @@ import tensorflow as tf
 from flask import Flask, request, jsonify
 
 from preprocessing import inception_preprocessing
-from nets import nets_factory, inception_v3
+from nets import nets_factory, inception_v3, inception_resnet_v2
 
 
 # Define all the needed global variables
@@ -32,13 +32,11 @@ def classify():
         processed_image.set_shape((299, 299, 3))
 
         processed_image = tf.expand_dims(processed_image, axis=0)
-
-
         x = tf.placeholder(tf.float32, (None, 299, 299, 3))
 
         # Create the model, use the default arg scope to configure the batch norm parameters.
-        with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
-            logits, _ = inception_v3.inception_v3(processed_image, num_classes=2, is_training=False)
+        with slim.arg_scope(inception_resnet_v2.inception_resnet_v2_arg_scope()):
+            logits, _ = inception_resnet_v2.inception_resnet_v2(processed_image, num_classes=2, is_training=False)
         checkpoint_path = tf.train.latest_checkpoint(checkpoint_path)
 
         init_fn = slim.assign_from_checkpoint_fn(
